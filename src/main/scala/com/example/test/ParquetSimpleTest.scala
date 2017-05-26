@@ -1,6 +1,5 @@
 package com.example.test
 
-import org.apache.commons.logging.LogFactory
 import org.apache.spark.sql.{SaveMode, SparkSession}
 import org.slf4j.LoggerFactory
 
