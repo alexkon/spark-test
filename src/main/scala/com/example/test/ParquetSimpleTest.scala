@@ -23,4 +23,6 @@ object ParquetSimpleTest extends App {
   logger.info("Start writing...")
   peopleDF.write.mode(SaveMode.Overwrite).parquet("data/people.parquet")
   logger.info("Finished")
+
+  spark.close()
 }
