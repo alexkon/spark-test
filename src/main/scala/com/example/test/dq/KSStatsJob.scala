@@ -9,7 +9,7 @@ import org.apache.spark.sql.types.DoubleType
 object KSStatsJob {
 
   val relative_error = 0.0001
-  val probabilities = (0 to 100).map(_.toDouble / 100).toArray
+  val probabilities: Array[Double] = (0 to 100).map(_.toDouble / 100).toArray
 
   def main(args: Array[String]): Unit = {
 
