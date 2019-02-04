@@ -29,10 +29,10 @@ object KSStatsJob {
 //    val outputPath = args(3)
 
 
-    val df1 = spark.read.parquet(pathPrev)
-    val df2 = spark.read.parquet(pathCurr)
+    val prevDF = spark.read.parquet(pathPrev)
+    val currDF = spark.read.parquet(pathCurr)
 
-    val quantiles = df2.stat.approxQuantile(colName, probabilities , relative_error)
+    val quantiles = prevDF.stat.approxQuantile(colName, probabilities , relative_error)
 
     println("Approx quantile:")
     println(s"quantiles = ${quantiles.toSeq}")
@@ -40,9 +40,9 @@ object KSStatsJob {
 
     // perform a KS test using a cumulative distribution function of our making
     import spark.implicits._
-    val inputRdd = df1
+    val inputRdd = currDF
       .select(colName)
-      .withColumn(colName, df1(colName).cast(DoubleType))
+      .withColumn(colName, currDF(colName).cast(DoubleType))
       .map(_.getAs[Double](0))
       .rdd
     val testResult = Statistics.kolmogorovSmirnovTest(inputRdd, cdfByQuantiles(probabilities, quantiles)(_))
