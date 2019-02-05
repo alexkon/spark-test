@@ -62,15 +62,15 @@ object KSStatsJob {
   }
 
   def cdfByQuantiles(probabilities: Array[Double], quantiles: Array[Double])(value: Double): Double = {
-    if (quantiles.contains(value)) {
-      val index = quantiles.lastIndexOf(value)
+    val index = quantiles.lastIndexOf(value)
+    if (index != -1) {
       probabilities(index)
     } else {
       val rightIndex = quantiles.indexWhere(value < _)
-      if (rightIndex == -1) // return prob for max quantile
-        probabilities.last
-      else if (rightIndex == 0) // return prob for min quantile
+      if (rightIndex == 0) // return prob for min quantile
         probabilities.head
+      else if (rightIndex == -1) // return prob for max quantile
+        probabilities.last
       else {
         val leftIndex = rightIndex - 1
         val weight = (value - quantiles(leftIndex)) / (quantiles(rightIndex) - quantiles(leftIndex))
