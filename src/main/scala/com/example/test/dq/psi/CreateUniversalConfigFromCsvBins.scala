@@ -32,9 +32,16 @@ object CreateUniversalConfigFromCsvBins {
     val universalBins = bins.map(b => UniversalBin(b.name, b.segment, b.bounds, binsSample.getOrElse((b.name, b.segment), Seq.empty[String])))
 
     println("Output config file content:")
-    universalBins.foreach(println)
 
-    new java.io.PrintWriter(s"$dataDir/$outputFileName") { try {write(universalBins.mkString("\n"))} finally {close()}}
+    val universalBinsGrouped = universalBins
+      .foldLeft(Map.empty[String, Seq[UniversalBin]]){ case (m, b) => m + ((b.name, b +: m.getOrElse(b.name, Seq.empty[UniversalBin])))}
+      .map { case (k, v) =>
+        val sBins = v.map(_.toStringNoName).mkString(",\n")
+        s"$k = [\n${sBins}\n]"
+      }
+
+    universalBinsGrouped.foreach(println)
+    new java.io.PrintWriter(s"$dataDir/$outputFileName") { try {write(universalBinsGrouped.mkString("\n"))} finally {close()}}
   }
 
   def readFileAsLines(fileName: String): Seq[String] = {
@@ -47,15 +54,26 @@ case class Bin(name: String, segment:String, bounds: Seq[Double])
 case class BinSampleRaw(segment:String, name: String, group:Double, num: Int)
 case class UniversalBin(name: String, segment:String, bounds: Seq[Double], population: Seq[String]) {
 
+  def span = "   "
+
   override def toString: String = {
-    val span = "   "
     s"""$name = [
-$span{
-${span * 2}bounds = [${bounds.mkString(", ")}]
-${span * 2}filter = {segment: $segment}
-${span * 2}key-columns = [name, segment]
-${span * 2}population = [${population.mkString(", ")}]
-$span}
-]""".stripMargin
+        |$span{
+        |${span * 2}bounds = [${bounds.mkString(", ")}]
+        |${span * 2}filter = {segment: $segment}
+        |${span * 2}key-columns = [name, segment]
+        |${span * 2}population = [${population.mkString(", ")}]
+        |$span}
+        |]""".stripMargin
+  }
+
+  def toStringNoName: String = {
+s"""$span{
+    |${span * 2}bounds = [${bounds.mkString(", ")}]
+    |${span * 2}filter = {segment: $segment}
+    |${span * 2}key-columns = [name, segment]
+    |${span * 2}population = [${population.mkString(", ")}]
+    |$span}""".stripMargin
   }
 }
+
