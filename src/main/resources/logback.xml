@@ -9,6 +9,7 @@
 
     <logger name="org.apache" level="WARN" />
     <logger name="org.spark_project" level="WARN" />
+    <logger name="org.sparkproject" level="WARN" />
     <logger name="io.netty" level="INFO" />
 
     <root level="INFO">

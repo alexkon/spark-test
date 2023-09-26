@@ -1,13 +1,13 @@
-name := "spark-test"
+ThisBuild / version := "0.1.0"
 
-version := "1.0"
-
-scalaVersion := "2.11.8"
+ThisBuild / scalaVersion := "2.12.13"
 
 libraryDependencies ++= Seq(
-  "org.apache.spark" %% "spark-sql" % "2.1.1"
-      exclude("org.slf4j", "slf4j-log4j12"),
-  "ch.qos.logback" % "logback-classic" % "1.1.7"
+  "org.apache.spark" %% "spark-sql" % "3.3.0" exclude("org.slf4j", "slf4j-log4j12"),
+  "ch.qos.logback" % "logback-classic" % "1.4.11"
 )
 
-mainClass in (Compile, run) := Some("com.example.test.ParquetSimpleTest")
+lazy val root = (project in file("."))
+  .settings(
+    name := "spark-test"
+  )
